@@ -7,16 +7,11 @@ export interface Dog {
   breed: string;
 }
 
-export interface Location {
-  zip_code: string;
-  latitude: number;
-  longitude: number;
-  city: string;
-  state: string;
-  county: string;
+export interface OptionProps {
+  title: string;
+  value: string;
 }
-
-export interface Coordinates {
-  lat: number;
-  lon: number;
+export interface BreedFilterProps {
+  title: string;
+  options: OptionProps[];
 }

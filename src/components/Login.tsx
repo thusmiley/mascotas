@@ -11,16 +11,7 @@ type FormInputs = {
 const Login = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-
-  // async function loginUser(credentials) {
-  //   return fetch("https://frontend-take-home-service.fetch.com/auth/login", {
-  //     method: "POST",
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //     },
-  //     body: JSON.stringify(credentials),
-  //   }).then((data) => data.json());
-  // }
+  const [err, setErr] = useState(false);
 
   const {
     register,
@@ -28,19 +19,30 @@ const Login = () => {
     formState: { errors },
   } = useForm();
 
-  const onSubmit = (data) => {
+  const onSubmit = async (data) => {
     console.log(data);
+    await fetch("https://frontend-take-home-service.fetch.com/auth/login", {
+      method: "POST",
+      headers: {
+        "Content-type": "application/json",
+      },
+      credentials: "include",
+      body: JSON.stringify(data),
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        } else {
+          return response;
+        }
+      })
+      .then((response) => {
+        window.location.replace("/search");
+      })
+      .catch((err) => {
+        setErr(!err);
+      });
   };
-
-
-  // const onSubmit = async (e) => {
-  //   e.preventDefault();
-  //   const token = await loginUser({
-  //     name,
-  //     email,
-  //   });
-  //   setToken(token);
-  // };
 
   return (
     <div className="sm:max-w-[377px] mx-auto">
@@ -61,6 +63,12 @@ const Login = () => {
           />
           {errors.email && <p className="errorMsg">{errors.email.message}</p>}
         </div>
+        {err && (
+          <p className="text-red-500 text-[15px] right-0 bottom-[-23px] mb-8 bg-red-200 px-4 py-3 rounded-[5px]">
+            Your name or email is incorrect or this account doesn't exist. Please try again.
+          </p>
+        )}
+
         <input type="submit" className="cursor-pointer" />
       </form>
     </div>
